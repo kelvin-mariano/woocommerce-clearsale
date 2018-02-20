@@ -51,17 +51,17 @@ class Clearsale {
             'Cobranca_Documento' => urlencode(get_post_meta( $order_id, '_billing_cpf', true )),
             'Cobranca_DDD_Telefone_1' => urlencode($ddd),
             'Cobranca_Telefone_1' => urlencode($number),
-            'Entrega_Nome' => urlencode($order_data['shipping']['first_name'].' '.$order_data['shipping']['last_name']),
+            'Entrega_Nome' => urlencode($order_data['shipping']['first_name'].$order_data['shipping']['last_name']) ? urlencode($order_data['shipping']['first_name'].' '.$order_data['shipping']['last_name']) : urlencode($order_data['billing']['first_name'].' '.$order_data['billing']['last_name']),
             'Entrega_Email' => urlencode($order_data['billing']['email']),
             'Entrega_Documento' => urlencode(get_post_meta( $order_id, '_billing_cpf', true )),
-            'Entrega_Logradouro' => urlencode($order_data['shipping']['address_1']),
-            'Entrega_Logradouro_Numero' => urlencode('01'),
+            'Entrega_Logradouro' => urlencode($order_data['shipping']['address_1']) ? urlencode($order_data['shipping']['address_1']) : urlencode($order_data['billing']['address_1']),
+            'Entrega_Logradouro_Numero' => urlencode(get_post_meta( $order_id, '_billing_number', true )) ? urlencode(get_post_meta( $order_id, '_billing_number', true )) : urlencode('01'),
             'Entrega_Logradouro_Complemento' => urlencode($order_data['shipping']['address_2']),
-            'Entrega_Bairro' => urlencode('Centro'),
-            'Entrega_Cidade' => urlencode($order_data['shipping']['city']),
-            'Entrega_Estado' => urlencode($order_data['shipping']['state']),
-            'Entrega_CEP' => urlencode($order_data['shipping']['postcode']),
-            'Entrega_Pais' => urlencode($order_data['shipping']['country']),
+            'Entrega_Bairro' => urlencode(get_post_meta( $order_id, '_billing_neighborhood', true )) ? urlencode(get_post_meta( $order_id, '_billing_neighborhood', true )) : urlencode('Centro'),
+            'Entrega_Cidade' => $order_data['shipping']['city'] ? urlencode($order_data['shipping']['city']) : urlencode($order_data['billing']['city']),
+            'Entrega_Estado' => urlencode($order_data['shipping']['state']) ? urlencode($order_data['shipping']['state']) : urlencode($order_data['billing']['state']),
+            'Entrega_CEP' => urlencode($order_data['shipping']['postcode']) ? urlencode($order_data['shipping']['postcode']) : urlencode($order_data['billing']['postcode']),
+            'Entrega_Pais' => urlencode($order_data['shipping']['country']) ? urlencode($order_data['shipping']['country']) : urlencode($order_data['billing']['country']),
             'Entrega_DDD_Telefone_1' => urlencode($ddd),
             'Entrega_Telefone_1' => urlencode($number),
             'Entrega_DDD_Celular' => urlencode($ddd),
@@ -78,6 +78,8 @@ class Clearsale {
               $fields['Item_Valor_'.$i] = urlencode(number_format($item_data['total'],2,',','.'));
               // $variation_id = $item_data['variation_id'];
           }
+
+          
 
           //url-ify the data for the POST
           foreach($fields as $key=>$value) { $fields_string .= $key.'='.$value.'&'; }
